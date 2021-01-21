@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import json
 from .models import Coordinates
 
@@ -17,6 +17,6 @@ def create_point(request):
         Coordinates.objects.create(x=response['x'],y=response['y'])
         return HttpResponse(status=200)
 
-    elif rqeuest.method == 'GET':
-        coords = {'coords':list(Coordinates.objects.all())}
-
+    elif request.method == 'GET':
+        data = {'coords':list(Coordinates.objects.values())}
+        return JsonResponse(data)

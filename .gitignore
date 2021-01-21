@@ -1,0 +1,4 @@
+.atom
+.vscode
+venv
+*.pyc

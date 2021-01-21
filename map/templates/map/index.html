@@ -9,6 +9,7 @@
         width: 100%;
       }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
     <title>OpenLayers example</title>
   </head>
@@ -18,15 +19,12 @@
       <div class="row">
         <div class='col-4'>
         <p id='coordinates'></p>
-        <ul>
-        {% for coord in coords %}
-         <li>latitude: {{ coord.x }} <br>longitude: {{ coord.y }}</li>
-        {% endfor %}
-        </ul>
+        <ul id='updateList'></ul>
         </div>
         <div class="col-8">
           <div id="map" class="map"></div>
           <script type="text/javascript">
+            updateList()
             var map = new ol.Map({
               target: 'map',
               layers: [
@@ -44,6 +42,21 @@
             var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
              return v ? v[2] : null;
             }
+          function updateList() {
+            $.ajax({
+            url: './create-point',
+            dataType: 'json',
+            success: function (data) { 
+              document.getElementById('updateList').innerHTML = JSON.stringify(data['coords'])
+              var coordString = '';
+              data['coords'].forEach(function(element) {
+                coordString = coordString+'<li> latitude: '+element['x']+'<br>'+'longitude: '+element['y']+'</li>'
+              
+              document.getElementById('updateList').innerHTML = coordString;
+              })
+            }
+            })
+          }
             
             map.on('click', function (evt) {
               var coordinates = evt.coordinate;
@@ -59,6 +72,7 @@
                  credentials: 'include',
                 body: '{"x":"'+coordinates[0]+'","y":"'+coordinates[1]+'"}'
               });
+            updateList();
 
               });
             
